@@ -10,7 +10,7 @@ def run_game():
     
     screen = pygame.display.set_mode(
         (ai_settings.screen_width, ai_settings.screen_height))
-    ship=Ship(screen)
+    ship=Ship(ai_settings,screen)
     
     # Запуск основного цикла
     while True:
