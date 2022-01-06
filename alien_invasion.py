@@ -20,7 +20,7 @@ def run_game():
     aliens = Group()
     alien = Alien(ai_settings, screen)
     # создание пришельца
-    gf.create_fleet(ai_settings, screen, aliens)
+    gf.create_fleet(ai_settings, screen,ship, aliens)
     # Запуск основного цикла
     while True:
         #   При каждом проходе цикла перерисовывается экран
