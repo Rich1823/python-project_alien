@@ -15,14 +15,16 @@ def run_game():
     ship = Ship(ai_settings, screen)
     # Создание группы для хранения пуль
     bullets = Group()
-    # создание пришельца
+    aliens=Group()
     alien=Alien(ai_settings, screen)
+    # создание пришельца
+    gf.create_fleet(ai_settings, screen, aliens)   
     # Запуск основного цикла
     while True:
         #   При каждом проходе цикла перерисовывается экран
         gf.check_events(ai_settings, screen, ship, bullets)
         ship.update()
         gf.update_bullets(bullets)
-        gf.update_screen(ai_settings, screen, ship,alien, bullets)
+        gf.update_screen(ai_settings, screen, ship,aliens, bullets)
 
 run_game()
