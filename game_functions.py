@@ -4,7 +4,6 @@ from bullet import Bullet
 from alien import Alien
 from time import sleep
 
-
 def check_events(ai_settings, screen, ship, bullets):
     # Отслеживание событий клавиатуры
     for event in pygame.event.get():
@@ -35,13 +34,15 @@ def check_keyup_events(event, ship):
         ship.moving_left = False
 
 
-def update_screen(ai_settings, screen, ship, aliens, bullets):
+def update_screen(ai_settings, screen,stats, ship, aliens, bullets,play_button):
     screen.fill(ai_settings.bg_color)
     for bullet in bullets.sprites():
         bullet.draw_bullet()
     ship.blitme()
 
     aliens.draw(screen)
+    if not stats.game_active:
+        play_button.draw_button()
     # Отображение последнего прорисованного экрана
     pygame.display.flip()
 
