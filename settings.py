@@ -10,7 +10,7 @@ class Settings():
         self.ship_speed_factor = 5
         # Параметры пули
         self.bullet_speed_factor = 3
-        self.bullet_width = 5
+        self.bullet_width = 100
         self.bullet_height = 15
         self.bullet_color = 60, 60, 60
         self.bullets_allowed = 10
