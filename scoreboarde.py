@@ -1,5 +1,6 @@
 import pygame.font
-
+from pygame.sprite import Group
+from ship import Ship
 
 class Scoreboarde():
     """ Класс для вывода игровой информации """
@@ -17,6 +18,7 @@ class Scoreboarde():
         self.prep_score()
         self.prepr_high_score() 
         self.prep_level()
+        self.prep_ships()
     def prep_score(self):
         """ Преобразует текущий счет в графическое изображение """
         rounded_score = int(round(self.stats.score, -1))
@@ -33,6 +35,8 @@ class Scoreboarde():
         self.screen.blit(self.score_image, self.score_rect)
         self.screen .blit(self.high_score_image,self.high_score_rect)
         self.screen.blit(self.level_image,self.level_rect)
+        #вывод кораблей
+        self.ships.draw(self.screen)
     def prepr_high_score(self):
         """Преобразует рекордный счет в графическое изобпажение """
         high_score=int(round(self.stats.high_score,-1))
@@ -51,3 +55,11 @@ class Scoreboarde():
         self.level_rect=self.level_image.get_rect()
         self.level_rect.right=self.score_rect.right
         self.level_rect.top=self.score_rect.bottom+10
+    def prep_ships(self):
+        """Сообщает кол-во оставшихся кораблей"""
+        self.ships=Group()
+        for ship_number in range(self.stats.ship_left):
+            ship=Ship(self.ai_settings, self.screen)
+            ship.rect.x=10+ship_number*ship.rect.width
+            ship.rect.y=10
+            self.ships.add(ship)
