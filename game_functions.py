@@ -5,14 +5,14 @@ from alien import Alien
 from time import sleep
 
 
-def check_events(ai_settings, screen, stats, play_button, ship, aliens, bullets):
+def check_events(ai_settings, screen, stats,sb, play_button, ship, aliens, bullets):
     # Отслеживание событий клавиатуры
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             sys.exit()
         elif event.type == pygame.MOUSEBUTTONDOWN:
             mouse_x, mouse_y = pygame.mouse.get_pos()
-            check_play_button(ai_settings, screen, stats,
+            check_play_button(ai_settings, screen, stats,sb,
                               play_button, ship, aliens, bullets, mouse_x, mouse_y)
         elif event.type == pygame.KEYDOWN:
             check_keydown_events(event, ai_settings, screen, ship, bullets)
@@ -20,8 +20,8 @@ def check_events(ai_settings, screen, stats, play_button, ship, aliens, bullets)
             check_keyup_events(event, ship)
 
 
-def check_play_button(ai_settings, screen, stats, 
-                play_button, ship, aliens, bullets, mouse_x, mouse_y):
+def check_play_button(ai_settings, screen, stats,sb,
+                      play_button, ship, aliens, bullets, mouse_x, mouse_y):
     """ Запускает новую игру """
     button_clicked = play_button.rect.collidepoint(mouse_x, mouse_y)
     if button_clicked and not stats.game_active:
@@ -32,6 +32,10 @@ def check_play_button(ai_settings, screen, stats,
         # Сброс игровой статистики
         stats.reset_stats()
         stats.game_active = True
+        #Сброс изображений счетов и уровня
+        sb.prep_score()
+        sb.prepr_high_score()
+        sb.prep_level()
         # Очитска списков пришельцев и пуль
         aliens.empty()
         bullets.empty()
@@ -59,7 +63,7 @@ def check_keyup_events(event, ship):
         ship.moving_left = False
 
 
-def update_screen(ai_settings, screen, stats,sb, ship, aliens, bullets, play_button):
+def update_screen(ai_settings, screen, stats, sb, ship, aliens, bullets, play_button):
     screen.fill(ai_settings.bg_color)
     for bullet in bullets.sprites():
         bullet.draw_bullet()
@@ -72,29 +76,35 @@ def update_screen(ai_settings, screen, stats,sb, ship, aliens, bullets, play_but
     pygame.display.flip()
 
 
-def update_bullets(ai_settings, screen,stats,sb, ship, aliens, bullets):
+def update_bullets(ai_settings, screen, stats, sb, ship, aliens, bullets):
     """ Обновляет позиции пуль  и уничтажает старые пули"""
     # Обновляет позиции пуль
     bullets.update()
     # Удаление пуль,вышедших за край экрана
-    # Удаление пуль,вышедших за край экрана
     for bullet in bullets.copy():
         if bullet.rect.bottom <= 0:
             bullets.remove(bullet)
-    check_bullet_alien_colisions(ai_settings, screen,stats,sb, ship, aliens, bullets)
+    check_bullet_alien_colisions(
+        ai_settings, screen, stats, sb, ship, aliens, bullets)
 
 
-def check_bullet_alien_colisions(ai_settings, screen,stats,sb, ship, aliens, bullets):
+def check_bullet_alien_colisions(ai_settings, screen, stats, sb, ship, aliens, bullets):
     # Удаляет и пулю и пришельца
     collision = pygame.sprite.groupcollide(bullets, aliens, True, True)
     if collision:
-        stats.score+=ai_settings.alien_points
+        for aliens in collision.values():
+             stats.score += ai_settings.alien_points * len(aliens)
         sb.prep_score()
+        check_high_score(stats, sb)
     if len(aliens) == 0:
-        # Уничтожение сужествующих пуль, 
+        #если весь флот уничтожен начинается следующий уровень
+        # Уничтожение сужествующих пуль,
         #  создание нового флота,повышение скорости
         bullets.empty()
         ai_settings.increase_speed()
+        # Увиличение уровня 
+        stats.level+=1
+        sb.prep_level()
         create_fleet(ai_settings, screen, ship, aliens)
 
 
@@ -186,6 +196,7 @@ def ship_hit(ai_settings, stats, screen, ship, aliens, bullets):
         stats.game_active = False
         pygame.mouse.set_visible(True)
 
+
 def check_aliens_bottom(ai_settings, stats, screen, ship, aliens, bullets):
     """ Проверяет добрались ли пришельцы до нижнего края экрана """
     screen_rect = screen.get_rect()
@@ -194,3 +205,9 @@ def check_aliens_bottom(ai_settings, stats, screen, ship, aliens, bullets):
             # Происходит то же,что при столкновении с кораблем
             ship_hit(ai_settings, stats, screen, ship, aliens, bullets)
             break
+
+def check_high_score(stats,sb):
+    """Проверяет появился ли новый рекорд"""
+    if stats.score>stats.high_score:
+        stats.high_score=stats.score
+        sb.prepr_high_score()

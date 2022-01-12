@@ -9,7 +9,7 @@ class Settings():
         self.bg_color = (90, 90, 90)
         self.ship_speed_factor = 5
         self.bullet_speed_factor = 3
-        self.bullet_width = 5
+        self.bullet_width = 6
         self.bullet_height = 15
         self.bullet_color = 60, 60, 60
         self.bullets_allowed = 10
@@ -18,6 +18,8 @@ class Settings():
         self.fleet_deriction = 1
         self.ship_limit = 3
         self.speedup_scale = 1.3  # Это ускорение игры Илюх меня под себя
+        self.score_scale = 1.5
+        self.alien_points = 2
         self.initialize_dynamic_settings()
 
     def initialize_dynamic_settings(self):
@@ -27,7 +29,7 @@ class Settings():
         self.alien_speed_factor = 0.5
         self.fleet_deriction = 1
         # Подсчет очков
-        self.alien_points = 2
+        self.alien_points = int(self.alien_points * self.score_scale)
 
     def increase_speed(self):
         """ Увеличивает настройки скорости """
