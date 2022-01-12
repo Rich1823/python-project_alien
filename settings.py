@@ -1,3 +1,10 @@
+# статья по настройке: https://www.twilio.com/blog/environment-variables-python
+import os
+# подключаем модуль для подгрузки настроек из .env файла
+from dotenv import load_dotenv
+# загружаем переменные из файла (без этого их нельзя будет получить через os.environ.get() )
+load_dotenv('.env')
+
 class Settings():
     """ Класс для хранения настроек игры """
 
@@ -7,8 +14,10 @@ class Settings():
         self.screen_width = 1200
         self.screen_height = 700
         self.bg_color = (90, 90, 90)
-        self.ship_speed_factor = 5
-        self.bullet_speed_factor = 3
+        # Берем скорость корабля из файла .env, если файла или переменной в нем нет - то берем 5
+        self.ship_speed_factor = os.environ.get('SHIP_SPEED_FACTOR', 5)
+        # Со скоростью снарядов то же самое: один параметр - одна константа
+        self.bullet_speed_factor = os.environ.get('BULLET_SPEED_FACTOR', 3)
         self.bullet_width = 5
         self.bullet_height = 15
         self.bullet_color = 60, 60, 60
